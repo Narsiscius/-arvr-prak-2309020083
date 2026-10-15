@@ -3,7 +3,7 @@
 - NIM : 2309020083
 - Link demo : https://github.com/Narsiscius/-arvr-prak-2309020083.git
 - github pages : https://narsiscius.github.io/-arvr-prak-2309020083/
-- ss scene : 
+- ss scene : https://github.com/Narsiscius/-arvr-prak-2309020083/blob/main/Screenshot%20Scene.png
 
 1. Mengapa z negatif?
 Di A-Frame dan three.js, sumbu z positif mengarah ke pengguna, sedangkan kamera secara default menghadap ke arah z negatif. Jadi objek harus diletakkan di z negatif supaya berada di depan kamera dan terlihat.
