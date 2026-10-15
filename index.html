@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+ <meta charset="utf-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title>Praktikum 1 - Scene Pertama</title>
+ <!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Tata Surya VR</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+</head>
+<body>
+<a-scene>
+
+  <!-- Background -->
+  <a-sky color="#000010"></a-sky>
+
+  <!-- Cahaya -->
+  <a-light type="ambient" color="#3a3f6a" intensity="0.6"></a-light>
+
+  <!-- Kamera (rig dimiringkan supaya melihat tata surya dari atas) -->
+  <a-entity id="rig" position="0 16 18" rotation="-25 0 0">
+    <a-camera look-controls wasd-controls="acceleration: 30"></a-camera>
+  </a-entity>
+
+  <!-- Pusat tata surya -->
+  <a-entity id="tatasurya" position="0 0 -20">
+
+    <!-- Matahari -->
+    <a-sphere radius="2.5" material="shader: flat; color: #ffb300"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 40000; easing: linear"></a-sphere>
+    <a-sphere radius="3.1" material="shader: flat; color: #ff7a00; opacity: 0.25; transparent: true"></a-sphere>
+    <a-light type="point" color="#fff1c9" intensity="2" decay="0" distance="0"></a-light>
+
+    <!-- Planet dibuat lewat script di bawah -->
+    <a-entity id="planet-wadah"></a-entity>
+  </a-entity>
+
+  <!-- Satelit mengorbit Matahari -->
+<a-entity rotation="25 0 0"> <!-- kemiringan orbit -->
+  <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear">
+    <a-entity position="13 0 0" scale="0.9 0.9 0.9">
+
+      <!-- Satelit ikut berputar pelan pada porosnya -->
+      <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
+
+        <!-- Badan utama -->
+        <a-box width="0.6" height="0.6" depth="0.6"
+          material="color: #d4af37; metalness: 0.8; roughness: 0.3"></a-box>
+
+        <!-- Panel surya kiri -->
+        <a-box position="-0.4 0 0" width="0.2" height="0.04" depth="0.1" color="#9e9e9e"></a-box>
+        <a-box position="-1.2 0 0" width="1.2" height="0.04" depth="0.7"
+          material="color: #1e3cff; metalness: 0.5; roughness: 0.2"></a-box>
+
+        <!-- Panel surya kanan -->
+        <a-box position="0.4 0 0" width="0.2" height="0.04" depth="0.1" color="#9e9e9e"></a-box>
+        <a-box position="1.2 0 0" width="1.2" height="0.04" depth="0.7"
+          material="color: #1e3cff; metalness: 0.5; roughness: 0.2"></a-box>
+
+        <!-- Antena parabola -->
+        <a-cylinder position="0 0.45 0" radius="0.03" height="0.3" color="#cfd8dc"></a-cylinder>
+        <a-cone position="0 0.75 0" radius-bottom="0.3" radius-top="0.02" height="0.15"
+          material="color: #f5f5f5; side: double"></a-cone>
+
+        <!-- Lampu kecil di sisi depan -->
+        <a-sphere position="0 0 0.32" radius="0.05" material="shader: flat; color: #ff3b3b"></a-sphere>
+      </a-entity>
+    </a-entity>
+  </a-entity>
+</a-entity>
+
+  <!-- Judul -->
+  <a-text value="Arya Adji Pratama - 2309020323" position="0 11 -20" align="center" color="#ffffff" width="22"></a-text>
+  <a-text value="Penjelajah Dunia Virtual" position="0 9.8 -20" align="center" color="#ffd166" width="14"></a-text>
+
+  <!-- Bintang -->
+  <a-entity id="bintang"></a-entity>
+
+</a-scene>
+
+<script>
+  // Komponen: label selalu menghadap kamera
+  AFRAME.registerComponent('billboard', {
+    init() { this.v = new THREE.Vector3(); },
+    tick() {
+      const cam = this.el.sceneEl.camera;
+      if (!cam) return;
+      cam.getWorldPosition(this.v);
+      this.el.object3D.lookAt(this.v);
+    }
+  });
+
+  // Data: [nama, radius, jarak orbit, warna, durasi orbit (ms), durasi rotasi diri (ms)]
+  const planet = [
+    ['Merkurius', 0.30,  4.5, '#9e9e9e',  8000, 12000],
+    ['Venus',     0.55,  6.5, '#e6c27a', 14000, 20000],
+    ['Bumi',      0.60,  8.8, '#2e7dff', 20000,  6000],
+    ['Mars',      0.42, 11.0, '#d9534f', 28000,  6500],
+    ['Jupiter',   1.40, 15.0, '#d8a77a', 45000,  4000],
+    ['Saturnus',  1.15, 19.5, '#e8c07a', 60000,  4500],
+    ['Uranus',    0.80, 23.0, '#8fe3e8', 80000,  7000],
+    ['Neptunus',  0.78, 26.5, '#3b5bdb', 100000, 7000]
+  ];
+
+  const wadah = document.querySelector('#planet-wadah');
+
+  planet.forEach(([nama, r, jarak, warna, durOrbit, durSpin]) => {
+    // Garis orbit
+    const orbit = document.createElement('a-ring');
+    orbit.setAttribute('rotation', '-90 0 0');
+    orbit.setAttribute('radius-inner', jarak - 0.03);
+    orbit.setAttribute('radius-outer', jarak + 0.03);
+    orbit.setAttribute('material', 'shader: flat; color: #ffffff; opacity: 0.18; transparent: true; side: double');
+    wadah.appendChild(orbit);
+
+    // Pivot orbit (berputar di pusat matahari)
+    const awal = Math.floor(Math.random() * 360);
+    const pivot = document.createElement('a-entity');
+    pivot.setAttribute('rotation', `0 ${awal} 0`);
+    pivot.setAttribute('animation',
+      `property: rotation; from: 0 ${awal} 0; to: 0 ${awal + 360} 0; loop: true; dur: ${durOrbit}; easing: linear`);
+
+    // Tempat planet
+    const holder = document.createElement('a-entity');
+    holder.setAttribute('position', `${jarak} 0 0`);
+
+    // Badan planet (berputar pada porosnya)
+    const badan = document.createElement('a-sphere');
+    badan.setAttribute('radius', r);
+    badan.setAttribute('color', warna);
+    badan.setAttribute('material', 'roughness: 1; metalness: 0');
+    badan.setAttribute('animation',
+      `property: rotation; to: 0 360 0; loop: true; dur: ${durSpin}; easing: linear`);
+    holder.appendChild(badan);
+
+    // Cincin Saturnus
+    if (nama === 'Saturnus') {
+      const miring = document.createElement('a-entity');
+      miring.setAttribute('rotation', '20 0 20');
+      const cincin = document.createElement('a-ring');
+      cincin.setAttribute('rotation', '-90 0 0');
+      cincin.setAttribute('radius-inner', r * 1.4);
+      cincin.setAttribute('radius-outer', r * 2.3);
+      cincin.setAttribute('material', 'color: #f2d49b; side: double; opacity: 0.8; transparent: true');
+      miring.appendChild(cincin);
+      holder.appendChild(miring);
+    }
+
+    // Bulan + satelit untuk Bumi
+    if (nama === 'Bumi') {
+      const orbitBulan = document.createElement('a-entity');
+      orbitBulan.setAttribute('animation',
+        'property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear');
+      const bulan = document.createElement('a-sphere');
+      bulan.setAttribute('position', '1.2 0 0');
+      bulan.setAttribute('radius', 0.17);
+      bulan.setAttribute('color', '#c9c9d6');
+      orbitBulan.appendChild(bulan);
+      holder.appendChild(orbitBulan);
+
+      const orbitSat = document.createElement('a-entity');
+      orbitSat.setAttribute('rotation', '40 0 0');
+      const putar = document.createElement('a-entity');
+      putar.setAttribute('animation',
+        'property: rotation; to: 0 -360 0; loop: true; dur: 3000; easing: linear');
+      const sat = document.createElement('a-entity');
+      sat.setAttribute('position', '0.95 0 0');
+      sat.innerHTML =
+        '<a-box depth="0.12" height="0.02" width="0.12" material="color: #cfd8dc; metalness: 0.6"></a-box>' +
+        '<a-box position="0.15 0 0" depth="0.1" height="0.01" width="0.2" color="#2e5cff"></a-box>' +
+        '<a-box position="-0.15 0 0" depth="0.1" height="0.01" width="0.2" color="#2e5cff"></a-box>';
+      putar.appendChild(sat);
+      orbitSat.appendChild(putar);
+      holder.appendChild(orbitSat);
+    }
+
+    // Label nama
+    const label = document.createElement('a-text');
+    label.setAttribute('value', nama);
+    label.setAttribute('align', 'center');
+    label.setAttribute('color', '#ffffff');
+    label.setAttribute('width', 6);
+    label.setAttribute('position', `0 ${r * (nama === 'Saturnus' ? 2.4 : 1.4) + 0.4} 0`);
+    label.setAttribute('billboard', '');
+    holder.appendChild(label);
+
+    pivot.appendChild(holder);
+    wadah.appendChild(pivot);
+  });
+
+  // Label Matahari
+  const lm = document.createElement('a-text');
+  lm.setAttribute('value', 'Matahari');
+  lm.setAttribute('align', 'center');
+  lm.setAttribute('color', '#ffd166');
+  lm.setAttribute('width', 8);
+  lm.setAttribute('position', '0 3.8 0');
+  lm.setAttribute('billboard', '');
+  wadah.appendChild(lm);
+
+  // Bintang (seluruh bola langit)
+  const bin = document.querySelector('#bintang');
+  const R = 60;
+  for (let i = 0; i < 300; i++) {
+    const az = Math.random() * Math.PI * 2;
+    const el = Math.asin(Math.random() * 2 - 1);
+    const s = document.createElement('a-sphere');
+    s.setAttribute('position',
+      `${R * Math.cos(el) * Math.cos(az)} ${R * Math.sin(el)} ${R * Math.cos(el) * Math.sin(az)}`);
+    s.setAttribute('radius', 0.1 + Math.random() * 0.15);
+    s.setAttribute('material', 'shader: flat; color: #ffffff');
+    bin.appendChild(s);
+  }
+</script>
+</body>
+</html>
