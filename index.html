@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
- <meta charset="utf-8">
- <meta name="viewport" content="width=device-width, initial-scale=1">
- <title>Praktikum 1 - Scene Pertama</title>
- <!DOCTYPE html>
-<html lang="id">
-<head>
   <meta charset="utf-8">
   <title>Tata Surya VR</title>
   <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -38,43 +32,18 @@
     <a-entity id="planet-wadah"></a-entity>
   </a-entity>
 
-  <!-- Satelit mengorbit Matahari -->
-<a-entity rotation="25 0 0"> <!-- kemiringan orbit -->
-  <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 16000; easing: linear">
-    <a-entity position="13 0 0" scale="0.9 0.9 0.9">
-
-      <!-- Satelit ikut berputar pelan pada porosnya -->
-      <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 8000; easing: linear">
-
-        <!-- Badan utama -->
-        <a-box width="0.6" height="0.6" depth="0.6"
-          material="color: #d4af37; metalness: 0.8; roughness: 0.3"></a-box>
-
-        <!-- Panel surya kiri -->
-        <a-box position="-0.4 0 0" width="0.2" height="0.04" depth="0.1" color="#9e9e9e"></a-box>
-        <a-box position="-1.2 0 0" width="1.2" height="0.04" depth="0.7"
-          material="color: #1e3cff; metalness: 0.5; roughness: 0.2"></a-box>
-
-        <!-- Panel surya kanan -->
-        <a-box position="0.4 0 0" width="0.2" height="0.04" depth="0.1" color="#9e9e9e"></a-box>
-        <a-box position="1.2 0 0" width="1.2" height="0.04" depth="0.7"
-          material="color: #1e3cff; metalness: 0.5; roughness: 0.2"></a-box>
-
-        <!-- Antena parabola -->
-        <a-cylinder position="0 0.45 0" radius="0.03" height="0.3" color="#cfd8dc"></a-cylinder>
-        <a-cone position="0 0.75 0" radius-bottom="0.3" radius-top="0.02" height="0.15"
-          material="color: #f5f5f5; side: double"></a-cone>
-
-        <!-- Lampu kecil di sisi depan -->
-        <a-sphere position="0 0 0.32" radius="0.05" material="shader: flat; color: #ff3b3b"></a-sphere>
-      </a-entity>
-    </a-entity>
+  <!-- Roket NASA (melayang di dekat kamera) -->
+  <a-entity position="9 4 -6" rotation="0 0 -20"
+    animation="property: position; to: 9 4.6 -6; dir: alternate; loop: true; dur: 2000; easing: easeInOutSine">
+    <a-cylinder radius="0.25" height="1" color="#f5f5f5"></a-cylinder>
+    <a-cone position="0 0.75 0" radius-bottom="0.25" radius-top="0" height="0.5" color="#ff5a5f"></a-cone>
+    <a-box position="0.3 -0.4 0" width="0.25" height="0.3" depth="0.05" color="#ff5a5f"></a-box>
+    <a-box position="-0.3 -0.4 0" width="0.25" height="0.3" depth="0.05" color="#ff5a5f"></a-box>
   </a-entity>
-</a-entity>
 
   <!-- Judul -->
   <a-text value="Arya Adji Pratama - 2309020323" position="0 11 -20" align="center" color="#ffffff" width="22"></a-text>
-  <a-text value="Penjelajah Dunia Virtual" position="0 9.8 -20" align="center" color="#ffd166" width="14"></a-text>
+  <a-text value="simple tata surya" position="0 9.8 -20" align="center" color="#ffd166" width="14"></a-text>
 
   <!-- Bintang -->
   <a-entity id="bintang"></a-entity>
